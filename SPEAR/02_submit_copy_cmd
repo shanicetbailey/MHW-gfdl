@@ -1,0 +1,50 @@
+#!/bin/bash
+#SBATCH --job-name=gcp_spear
+#SBATCH --partition=batch
+#SBATCH --time=08:00:00
+#SBATCH --ntasks=1
+
+module load gcp
+
+spear_dir=$1
+outdir=$2
+
+#indir=$spear_dir/pp/ice_daily/ts/daily/1yr
+indir=$spear_dir/pp/atmos_daily/ts/daily/1yr
+#indir=$spear_dir/pp/ice_daily/ts/daily/10yr
+
+# dmget - makes the folder available 
+#get 1980-end of period for SPEAR-HI, don't need all the way from 1920
+#dmget $indir/*.198*.SST.nc
+#dmget $indir/*.199*.SST.nc
+#dmget $indir/*.2*.SST.nc
+
+#dmget $indir/*SST.nc
+#dmget $indir/*.lwflx.nc
+#dmget $indir/*.hfds.nc
+#dmget $indir/*.u_ref.nc
+#dmget $indir/*.v_ref.nc
+#dmget $indir/*.t_surf.nc
+dmget $indir/*.swdn_sfc.nc
+dmget $indir/*.swup_sfc.nc
+dmget $indir/*.evap.nc
+dmget $indir/*.shflx.nc
+
+echo $spear_dir
+
+# copy the folder
+#cp -r $spear_dir $outdir/
+#gcp $indir/*.lwflx.nc $outdir/
+#gcp $indir/*.hfds.nc $outdir/
+#gcp $indir/*.u_ref.nc $outdir/
+#gcp $indir/*.v_ref.nc $outdir/
+#gcp $indir/*.t_surf.nc $outdir/ 
+#gcp $indir/*SST.nc $outdir/
+#gcp $indir/*swdn_sfc.nc $outdir/
+#gcp $indir/*swup_sfc.nc $outdir/
+#gcp $indir/*evap.nc $outdir/
+#gcp $indir/*shflx.nc $outdir/
+
+#gcp $indir/*.198*.SST.nc $outdir/
+#gcp $indir/*.199*.SST.nc $outdir/
+#gcp $indir/*.2*.SST.nc $outdir/

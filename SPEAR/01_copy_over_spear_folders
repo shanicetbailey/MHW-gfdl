@@ -1,0 +1,15 @@
+#!/bin/bash
+indir=/archive/wfc/SPEAR
+#outdir=/work/Liz.Drenkard/test_spear_copy
+outdir=/work5/stb/MHW-gfdl/SPEAR
+
+#iterating over ensemble members
+for n_en in {01..30}; do
+    spear_folder=$indir/SPEAR_c384_OM4p25_Hist_SSP245_IC1991_R61_ens_${n_en}
+
+    mkdir $outdir/SPEAR_c384_OM4p25_Hist_SSP245_IC1991_R61_ens_${n_en}
+
+    echo $spear_folder
+    sbatch 02_submit_copy_cmd $spear_folder $outdir/SPEAR_c384_OM4p25_Hist_SSP245_IC1991_R61_ens_${n_en}
+done 
+
