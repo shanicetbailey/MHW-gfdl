@@ -1,0 +1,84 @@
+#!/bin/bash
+#SBATCH --job-name=ncks_mhw_spear_files
+#SBATCH --partition=batch
+#SBATCH --time=08:00:00
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+
+module load nco
+
+
+indir=$1
+ens_str=$2
+yr0=$3
+yrn=$4
+var_list=$5
+ncks_str=$6
+outdir=$7
+
+cd $TMPDIR
+
+echo $indir
+echo $yr0
+echo $yrn
+echo $ncks_str
+echo $var_list
+
+fil_num=0
+echo $fil_num
+for var_nm in $var_list; do
+
+    echo $var_nm
+
+    for infil in $indir/*.${var_nm}.nc; do
+    
+        echo $infil
+    
+        # extract start year from filename
+        yr=$(basename $infil | cut -d'.' -f2 | cut -c1-4)
+    
+        tmpfil=${var_nm}_ens${ens_str}_${yr}.nc
+    
+        echo $ncks_str $infil $tmpfil
+        $ncks_str $infil $tmpfil
+    
+    done
+
+    #ncrcat files from all yrs
+    ncrcat ${var_nm}_ens${ens_str}_????.nc ${var_nm}_ens${ens_str}_$yr0-$yrn.nc
+    cp ${var_nm}_ens${ens_str}_$yr0-$yrn.nc $outdir/${var_nm}_ens${ens_str}_$yr0-$yrn.nc
+   
+    #remove original files
+    rm ${var_nm}_ens${ens_str}_????.nc
+
+done
+
+#    for ((yr=$yr0;yr<=$yrn;yr++)); do
+#        infil=$indir/*.$yr*.$var_nm.nc
+#        echo $infil 
+#        tmpfil=${var_nm}_ens${ens_str}_${yr}.nc
+#        #ncks files
+#        echo $ncks_str $infil $tmpfil
+#        $ncks_str $infil $tmpfil
+#    done
+#    #ncrcat files from all yrs
+#    ncrcat ${var_nm}_ens${ens_str}_????.nc ${var_nm}_ens${ens_str}_$yr0-$yrn.nc
+#    cp ${var_nm}_ens${ens_str}_$yr0-$yrn.nc $outdir/${var_nm}_ens${ens_str}_$yr0-$yrn.nc
+   
+#    #remove original files
+#    rm ${var_nm}_ens${ens_str}_????.nc
+
+##this step concats all vars to a single ds (but final file will be very large)
+##    if [[ "$fil_num" -lt 1 ]]; then
+##       # if it's the first variable, create the final file
+##       cp ${var_nm}_ens${ens_str}_$yr0-$yrn.nc $outdir/atmos_ens${ens_str}_$yr0-$yrn.nc
+##       ((fil_num+=1))
+##
+##    else
+##       # append all other variable files
+##       ncks -A ${var_nm}_ens${ens_str}_$yr0-$yrn.nc $outdir/atmos_ens${ens_str}_$yr0-$yrn.nc
+##    fi
+
+#done
+
+
